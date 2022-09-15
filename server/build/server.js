@@ -1,5 +1,8 @@
-import express from 'express';
+import express, { request, response } from 'express';
+
 const app = express();
+
+
 app.get('/ads', (request, response) => {
     return response.json([
         { id: 1, name: 'Ad 1' },
