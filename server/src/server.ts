@@ -1,5 +1,5 @@
 import express from "express"
-import cors from 'cors'
+import cors from 'cors' //Protect ours API from Front-End's address that are untrusted (we can deny who we want)
 
 import { PrismaClient } from '@prisma/client'
 import { convertHourStringToMinutes } from "./utils/convert-hour-string-in-minutes"
@@ -36,6 +36,8 @@ app.post('/games/:id/ads', async (request, response) =>{
     const gameId = request.params.id;
 
     const body: any = request.body;
+
+    // Validação com ZOD - Adicionar
 
     const ad = await prisma.ad.create({
       data: {

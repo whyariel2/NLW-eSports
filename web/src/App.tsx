@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
-import { MagnifyingGlassPlus } from 'phosphor-react'
+import { useEffect, useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog'
 
 import './styles/main.css';
 
@@ -8,10 +7,26 @@ import logoImg from './assets/logo-nlw-esports.svg';
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
 
+interface Game {
+  id: string;
+  title: string;
+  bannerUrl: string;
+  _count:{
+    ads: number;
+  }
+}
 
 //This is a component
 function App() {
-  const [hasUserClickedOnButton, setHasUserClickedOnButton] = useState(false)
+  const [games, setGames] = useState<Game[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:3333/games')
+    .then(response => response.json())
+    .then(data => {
+      setGames(data)
+    })
+  }, [])
 
   return (
     <div className='max-w-[1344px] mx-auto flex flex-col items-center my-20'>
@@ -21,15 +36,34 @@ function App() {
 
       {/* Container Game Banner */}
       <div className='grid grid-cols-6 gap-6 mt-16'>
-        <GameBanner bannerUrl='/game1.png' title='League of Legends' adsCount={5}/>
-        <GameBanner bannerUrl='/game2.png' title='Apex Legends' adsCount={5}/>
-        <GameBanner bannerUrl='/game3.png' title='CS:GO' adsCount={5}/>
-        <GameBanner bannerUrl='/game4.png' title='Valorant' adsCount={5}/>
-        <GameBanner bannerUrl='/game5.png' title='Minecraft' adsCount={5}/>
-        <GameBanner bannerUrl='/game6.png' title='Fortnite' adsCount={5}/>
+        {games.map(game => {
+          return (
+            <GameBanner
+            key={game.id} 
+            title={game.title} 
+            bannerUrl={game.bannerUrl} 
+            adsCount={game._count.ads}
+            />
+          )
+        })}
+        
       </div>
 
-      <CreateAdBanner />
+      <Dialog.Root>
+        <CreateAdBanner />
+
+        <Dialog.Portal>
+          <Dialog.Overlay className="bg-black/60 inset-0 fixed"/>
+
+          <Dialog.Content className="fixed bg-[#2A2634] py-8 px-10 text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-[480px]">
+            <Dialog.Title>Publique um anúncio</Dialog.Title>
+
+            <Dialog.Content>
+              qualquer coisa
+            </Dialog.Content>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
